@@ -1,0 +1,1 @@
+UPDATE x SET y=2;
