@@ -25,10 +25,10 @@ import java.sql.Statement;
 import java.util.List;
 
 import org.apache.cayenne.access.DataNode;
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
+import org.apache.cayenne.dbsync.merge.token.db.AbstractToDbToken;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.map.DataMap;
-import org.apache.cayenne.merge.AbstractToDbToken;
-import org.apache.cayenne.merge.MergerToken;
 import org.apache.commons.lang.StringUtils;
 
 /**

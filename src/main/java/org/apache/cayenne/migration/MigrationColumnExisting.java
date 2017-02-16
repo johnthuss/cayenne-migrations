@@ -19,12 +19,6 @@
 package org.apache.cayenne.migration;
 
 import java.sql.Types;
-import java.util.Collections;
-import java.util.List;
-
-import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.map.DbEntity;
-import org.apache.cayenne.merge.ValueForNullProvider;
 
 
 

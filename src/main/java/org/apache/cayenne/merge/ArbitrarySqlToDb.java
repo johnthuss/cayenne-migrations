@@ -22,6 +22,10 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.cayenne.dba.DbAdapter;
+import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
+import org.apache.cayenne.dbsync.merge.token.DummyReverseToken;
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
+import org.apache.cayenne.dbsync.merge.token.db.AbstractToDbToken;
 
 /**
  * A MergerToken that simply executes an explicit sql string using no mapping information (DataMap).<br>
@@ -36,7 +40,7 @@ public class ArbitrarySqlToDb extends AbstractToDbToken {
 	private String sql;
 	
 	public ArbitrarySqlToDb(String sql) {
-	    super("Arbitrary SQL");
+	    super("Arbitrary SQL", 1); // FIXME introduced arbitrary weight
 		this.sql = sql;
 	}
 
@@ -44,11 +48,12 @@ public class ArbitrarySqlToDb extends AbstractToDbToken {
 		return sql;
 	}
 
-	public MergerToken createReverse(MergerFactory factory) {
+	public MergerToken createReverse(MergerTokenFactory factory) {
 		return new DummyReverseToken(this);
 	}
 
-	public int compareTo(MergerToken token) {
+	@Override
+    public int compareTo(MergerToken token) {
 		return (token instanceof ArbitrarySqlToDb) ? 0 : 1;
 	}
 

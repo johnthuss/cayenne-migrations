@@ -25,10 +25,10 @@ import java.util.Map;
 
 import org.apache.cayenne.access.DataNode;
 import org.apache.cayenne.dba.DbAdapter;
+import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.merge.ArbitrarySqlToDb;
-import org.apache.cayenne.merge.MergerFactory;
-import org.apache.cayenne.merge.MergerToken;
 
 /**
  * Represents the database and provides operations for changing the schema.
@@ -111,7 +111,7 @@ public class MigrationDatabase {
 	    return adapter;
 	}
 	
-	MergerFactory factory() {
+	MergerTokenFactory factory() {
 		return adapter.mergerFactory();
 	}
 

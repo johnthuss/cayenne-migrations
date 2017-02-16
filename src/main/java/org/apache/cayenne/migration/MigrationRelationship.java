@@ -18,11 +18,11 @@
  ****************************************************************/
 package org.apache.cayenne.migration;
 
+import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.map.DbJoin;
 import org.apache.cayenne.map.DbRelationship;
-import org.apache.cayenne.merge.MergerFactory;
 
 /**
  * Represents a foreign key constraint in the database and provides operations for changing the schema.
@@ -63,7 +63,7 @@ class MigrationRelationship {
 		    }
 		}
 		
-		DbAttribute targetAttribute = (DbAttribute) targetEntity.getAttribute(destinationColumnName);
+		DbAttribute targetAttribute = targetEntity.getAttribute(destinationColumnName);
 		if (targetAttribute == null) {
 		    for (DbAttribute attr : targetEntity.getAttributes()) {
 		        if (attr.getName().equalsIgnoreCase(destinationColumnName)) {
@@ -95,7 +95,7 @@ class MigrationRelationship {
 		return relationship;
 	}
 	
-	MergerFactory factory() {
+	MergerTokenFactory factory() {
 		return table.factory();
 	}
 	

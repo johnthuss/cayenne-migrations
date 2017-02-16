@@ -18,8 +18,8 @@
  ****************************************************************/
 package org.apache.cayenne.migration;
 
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
 import org.apache.cayenne.map.DbAttribute;
-import org.apache.cayenne.merge.MergerToken;
 
 /**
  * Represents an existing table in the database and provides operations for changing the schema.

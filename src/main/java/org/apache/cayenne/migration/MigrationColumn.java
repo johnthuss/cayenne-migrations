@@ -24,10 +24,10 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
+import org.apache.cayenne.dbsync.merge.token.ValueForNullProvider;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
-import org.apache.cayenne.merge.MergerFactory;
-import org.apache.cayenne.merge.ValueForNullProvider;
 
 /**
  * Represents a column in the database and provides operations for changing the schema.
@@ -80,7 +80,7 @@ public abstract class MigrationColumn {
 	    return defaultValue;
 	}
 	
-	MergerFactory factory() {
+	MergerTokenFactory factory() {
 		return table.factory();
 	}
 	
@@ -91,14 +91,24 @@ public abstract class MigrationColumn {
      * @param value the new default or NULL for no default
      */
     protected MigrationColumn setDefault(final Object value) {
-        getTable().getDatabase().addOperation(factory().createSetValueForNullToDb(getTable().getEntity(), getAttribute(), new ValueForNullProvider() {
-            public boolean hasValueFor(DbEntity entity, DbAttribute column) {
-                return value != null;
-            }
-            public List<String> createSql(DbEntity entity, DbAttribute column) {
-                return Collections.singletonList(alterColumnDefaultValue(getAttribute(), value));
-            }
-        }));
+        getTable().getDatabase().addOperation(
+                factory().createSetValueForNullToDb(
+                        getTable().getEntity(),
+                        getAttribute(),
+                        new ValueForNullProvider() {
+
+                            public boolean hasValueFor(DbEntity entity, DbAttribute column) {
+                                return value != null;
+                            }
+
+                            public List<String> createSql(
+                                    DbEntity entity,
+                                    DbAttribute column) {
+                                return Collections.singletonList(alterColumnDefaultValue(
+                                        getAttribute(),
+                                        value));
+                            }
+                        }));
         return this;
     }
     
@@ -106,9 +116,9 @@ public abstract class MigrationColumn {
      * @return an SQL statement that will add or remove a default value to/from a column
      */
     protected String alterColumnDefaultValue(DbAttribute column, Object defaultValue) {
-        return String.format("ALTER TABLE %s ALTER %s SET DEFAULT %s", 
-                column.getEntity().getName(), 
-                column.getName(), 
+        return String.format("ALTER TABLE %s ALTER %s SET DEFAULT %s",
+                column.getEntity().getName(),
+                column.getName(),
                 sqlForLiteral(defaultValue));
     }
     
