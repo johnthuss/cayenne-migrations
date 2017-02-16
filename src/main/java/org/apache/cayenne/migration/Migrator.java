@@ -155,8 +155,6 @@ public class Migrator {
 	public void migrateToLatest() throws SQLException {
 		synchronized (node) {
             try {
-                node.getAdapter().mergerFactory(); // force adapter to resolve early
-                
 				getConnection();
 	            
 				for (DataMap map : node.getDataMaps()) {

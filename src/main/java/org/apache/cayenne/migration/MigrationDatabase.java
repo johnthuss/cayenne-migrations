@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.cayenne.access.DataNode;
+import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.dba.DbAdapter;
 import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
 import org.apache.cayenne.dbsync.merge.token.MergerToken;
@@ -112,7 +113,7 @@ public class MigrationDatabase {
 	}
 	
 	MergerTokenFactory factory() {
-		return adapter.mergerFactory();
+        return ServerRuntime.getThreadInjector().getInstance(MergerTokenFactory.class);
 	}
 
 	String getDatabaseProductName() {
