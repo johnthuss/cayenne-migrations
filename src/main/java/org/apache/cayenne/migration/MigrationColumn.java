@@ -97,10 +97,12 @@ public abstract class MigrationColumn {
                         getAttribute(),
                         new ValueForNullProvider() {
 
+                            @Override
                             public boolean hasValueFor(DbEntity entity, DbAttribute column) {
                                 return value != null;
                             }
 
+                            @Override
                             public List<String> createSql(
                                     DbEntity entity,
                                     DbAttribute column) {

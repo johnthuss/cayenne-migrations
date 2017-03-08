@@ -18,9 +18,6 @@
  ****************************************************************/
 package org.apache.cayenne.migration;
 
-import java.sql.Connection;
-import java.sql.SQLException;
-
 import org.apache.cayenne.access.DataNode;
 
 /**
@@ -29,9 +26,9 @@ import org.apache.cayenne.access.DataNode;
  * The SQL filename follows these naming conventions:<br>
  * 1) It is located in the same package as the Migration class it accompanies.<br>
  * 2) It is named the same as the Migration class is accompanies with a ".sql" extension.<br>
- * Optionally the class name may be followed by a dash ("-") and the database vendor name to refer to a 
+ * Optionally the class name may be followed by a dash ("-") and the database vendor name to refer to a
  * database-specific file for cases where you want support multiple DB implementations.<br>
- * The database name is determined by the result of: connection.getMetaData().getDatabaseProductName(). See 
+ * The database name is determined by the result of: connection.getMetaData().getDatabaseProductName(). See
  * {@link #databaseSpecificSqlFilename() } for common names.<br>
  * 
  * <p>So for a Migration class named Tutorial0 the generic (universal) sql file would be named 'Tutorial0.sql'<br>
@@ -71,7 +68,7 @@ public class SqlFileMigration extends Migration {
 	}
 	
 	/**
-	 * Returns the filename for a database-specific sql script file with migration commands. 
+	 * Returns the filename for a database-specific sql script file with migration commands.
 	 * For example, for a data map named 'MyDataMap' for the initial migration (zero), the file name would look like this for various databases:<br>
 	 * 'MyDataMap0-MicrosoftSQLServer.sql'<br>
 	 * 'MyDataMap0-Oracle.sql'<br>

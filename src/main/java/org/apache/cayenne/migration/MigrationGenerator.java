@@ -34,7 +34,7 @@ import org.apache.cayenne.map.DbRelationship;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Given a Cayenne project file (model) this will generate a Migration subclass that 
+ * Given a Cayenne project file (model) this will generate a Migration subclass that
  * includes all the operations to create a database from scratch for the first time.
  * 
  * @author john
@@ -132,7 +132,7 @@ public class MigrationGenerator {
 	protected String fullyQualifiedTableName(DbEntity entity) {
 	    String fullyQualifiedTableName = StringUtils.isEmpty(entity.getCatalog()) ? "" : (entity.getCatalog()+".");
 	    fullyQualifiedTableName += StringUtils.isEmpty(entity.getSchema()) ? "" : (entity.getSchema()+".");
-	    fullyQualifiedTableName += entity.getName(); 
+	    fullyQualifiedTableName += entity.getName();
 	    return fullyQualifiedTableName;
 	}
 	
@@ -193,9 +193,9 @@ public class MigrationGenerator {
 
 		for (DbRelationship relationship : entity.getRelationships()) {
 			if (!relationship.isToMany() && relationship.isToPK()) {
-				buffer.append(String.format("\t\t%s.addForeignKey(\"%s\", \"%s\", \"%s\", true);\n", tableName, 
+				buffer.append(String.format("\t\t%s.addForeignKey(\"%s\", \"%s\", \"%s\", true);\n", tableName,
 						relationship.getSourceAttributes().iterator().next().getName(),
-						fullyQualifiedTableName((DbEntity)relationship.getTargetEntity()),
+						fullyQualifiedTableName(relationship.getTargetEntity()),
 						relationship.getTargetAttributes().iterator().next().getName()));
 			}
 		}
@@ -240,7 +240,7 @@ public class MigrationGenerator {
 	}
 	
 	protected boolean hasLength(int type) {
-		return TypesMapping.supportsLength(type) 
+		return TypesMapping.supportsLength(type)
 		        || type == Types.BLOB // for Derby
 		        || type == Types.CLOB // for Derby
 		        || type == Types.TIMESTAMP // for MySQL
