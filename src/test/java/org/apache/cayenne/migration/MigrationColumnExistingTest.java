@@ -24,6 +24,7 @@ import java.util.Collections;
 import junit.framework.TestCase;
 
 import org.apache.cayenne.access.DataNode;
+import org.apache.cayenne.access.types.DefaultValueObjectTypeRegistry;
 import org.apache.cayenne.configuration.DefaultRuntimeProperties;
 import org.apache.cayenne.configuration.RuntimeProperties;
 import org.apache.cayenne.dba.postgres.PostgresAdapter;
@@ -47,7 +48,7 @@ public class MigrationColumnExistingTest extends TestCase {
         
         RuntimeProperties props = new DefaultRuntimeProperties(Collections.EMPTY_MAP);
         ClassLoaderResourceLocator resourceLocator = new ClassLoaderResourceLocator(new DefaultClassLoaderManager());
-        PostgresAdapter adapter = new PostgresAdapter(props, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, resourceLocator);
+        PostgresAdapter adapter = new PostgresAdapter(props, Collections.EMPTY_LIST, Collections.EMPTY_LIST, Collections.EMPTY_LIST, resourceLocator, new DefaultValueObjectTypeRegistry(Collections.emptyList()));
         node.setAdapter(adapter);
         
         db = new MigrationDatabase(node);
