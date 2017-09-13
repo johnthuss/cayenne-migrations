@@ -18,12 +18,9 @@
  ****************************************************************/
 package org.apache.cayenne.migration;
 
-import java.util.List;
-
-import org.apache.cayenne.dba.postgres.PostgresAdapter;
-import org.apache.cayenne.merge.AbstractToDbToken;
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
+import org.apache.cayenne.dbsync.merge.token.db.AbstractToDbToken;
 import org.apache.cayenne.merge.ArbitrarySqlToDb;
-import org.apache.cayenne.merge.MergerToken;
 
 /**
  * Represents a new column in the database.

@@ -23,11 +23,10 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.cayenne.map.DbAttribute;
+import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
 import org.apache.cayenne.map.DbEntity;
 import org.apache.cayenne.merge.ArbitrarySqlToDb;
-import org.apache.cayenne.merge.MergerFactory;
-import org.apache.cayenne.merge.MergerToken;
 
 /**
  * Represents a table in the database and provides operations for changing the schema.
@@ -56,7 +55,7 @@ public abstract class MigrationTable {
 		return database;
 	}
 	
-	MergerFactory factory() {
+	MergerTokenFactory factory() {
 		return database.factory();
 	}
 	
@@ -287,7 +286,7 @@ public abstract class MigrationTable {
 	 * @param columnName
 	 */
 	public void addPrimaryKey(String columnName) {
-		((DbAttribute)entity.getAttribute(columnName)).setPrimaryKey(true);
+		entity.getAttribute(columnName).setPrimaryKey(true);
 		if (!isNew()) {
 			MigrationColumn column = columns.get(columnName);
 			MergerToken op = factory().createSetPrimaryKeyToDb(getEntity(), Collections.EMPTY_LIST, Collections.singletonList(column.getAttribute()), null);

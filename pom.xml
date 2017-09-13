@@ -15,7 +15,12 @@
 		<dependency>
 			<groupId>org.apache.cayenne</groupId>
 			<artifactId>cayenne-server</artifactId>
-			<version>4.0.M2</version>
+			<version>4.0.M5-SNAPSHOT</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cayenne</groupId>
+			<artifactId>cayenne-dbsync</artifactId>
+			<version>4.0.M5-SNAPSHOT</version>
 		</dependency>
 	</dependencies>
 	<build>
@@ -24,8 +29,8 @@
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<configuration>
-					<source>1.5</source>
-					<target>1.5</target>
+					<source>1.8</source>
+					<target>1.8</target>
 				</configuration>
 			</plugin>
 		</plugins>

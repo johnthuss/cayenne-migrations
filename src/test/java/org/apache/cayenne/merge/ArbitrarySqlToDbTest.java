@@ -22,6 +22,7 @@ import java.util.List;
 
 import junit.framework.TestCase;
 
+import org.apache.cayenne.dbsync.merge.token.db.CreateTableToDb;
 import org.apache.cayenne.map.DbEntity;
 
 public class ArbitrarySqlToDbTest extends TestCase {

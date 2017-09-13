@@ -26,10 +26,10 @@ import org.apache.cayenne.access.DataNode;
 import org.apache.cayenne.configuration.DefaultRuntimeProperties;
 import org.apache.cayenne.configuration.RuntimeProperties;
 import org.apache.cayenne.dba.postgres.PostgresAdapter;
+import org.apache.cayenne.dbsync.merge.token.db.CreateTableToDb;
+import org.apache.cayenne.dbsync.merge.token.db.DropTableToDb;
 import org.apache.cayenne.di.spi.DefaultClassLoaderManager;
 import org.apache.cayenne.merge.ArbitrarySqlToDb;
-import org.apache.cayenne.merge.CreateTableToDb;
-import org.apache.cayenne.merge.DropTableToDb;
 import org.apache.cayenne.resource.ClassLoaderResourceLocator;
 
 public class MigrationDatabaseTest extends TestCase {

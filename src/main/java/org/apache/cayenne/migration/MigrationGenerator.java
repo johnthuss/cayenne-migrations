@@ -24,7 +24,9 @@ import java.io.Writer;
 import java.sql.Types;
 
 import org.apache.cayenne.configuration.server.ServerRuntime;
+import org.apache.cayenne.configuration.server.ServerRuntimeBuilder;
 import org.apache.cayenne.dba.TypesMapping;
+import org.apache.cayenne.dbsync.DbSyncModule;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.map.DbAttribute;
 import org.apache.cayenne.map.DbEntity;
@@ -32,7 +34,7 @@ import org.apache.cayenne.map.DbRelationship;
 import org.apache.commons.lang.StringUtils;
 
 /**
- * Given a Cayenne project file (model) this will generate a Migration subclass that 
+ * Given a Cayenne project file (model) this will generate a Migration subclass that
  * includes all the operations to create a database from scratch for the first time.
  * 
  * @author john
@@ -61,9 +63,6 @@ public class MigrationGenerator {
 	private StringBuilder buffer;
 	private ServerRuntime runtime;
 	
-	public MigrationGenerator() {
-	}
-	
 	/**
 	 * Generates the migration code necessary to recreate the entire database as defined by the cayenne project (model).
 	 * 
@@ -71,7 +70,12 @@ public class MigrationGenerator {
 	 * @param outputFolder
 	 */
 	public void generateInitialMigration(String configurationLocation, String outputFolder) {
-		runtime = new ServerRuntime(configurationLocation);
+	    ServerRuntimeBuilder builder = ServerRuntime.builder();
+	    builder.addConfig(configurationLocation);
+	    builder.addModule(new DbSyncModule());
+		runtime = builder.build();
+		ServerRuntime.bindThreadInjector( runtime.getInjector() );
+
 		for (DataMap map : runtime.getDataDomain().getDataMaps()) {
 			generateInitialMigration(map, outputFolder + "/" + className(map) + ".java");
 		};
@@ -128,7 +132,7 @@ public class MigrationGenerator {
 	protected String fullyQualifiedTableName(DbEntity entity) {
 	    String fullyQualifiedTableName = StringUtils.isEmpty(entity.getCatalog()) ? "" : (entity.getCatalog()+".");
 	    fullyQualifiedTableName += StringUtils.isEmpty(entity.getSchema()) ? "" : (entity.getSchema()+".");
-	    fullyQualifiedTableName += entity.getName(); 
+	    fullyQualifiedTableName += entity.getName();
 	    return fullyQualifiedTableName;
 	}
 	
@@ -189,9 +193,9 @@ public class MigrationGenerator {
 
 		for (DbRelationship relationship : entity.getRelationships()) {
 			if (!relationship.isToMany() && relationship.isToPK()) {
-				buffer.append(String.format("\t\t%s.addForeignKey(\"%s\", \"%s\", \"%s\", true);\n", tableName, 
+				buffer.append(String.format("\t\t%s.addForeignKey(\"%s\", \"%s\", \"%s\", true);\n", tableName,
 						relationship.getSourceAttributes().iterator().next().getName(),
-						fullyQualifiedTableName((DbEntity)relationship.getTargetEntity()),
+						fullyQualifiedTableName(relationship.getTargetEntity()),
 						relationship.getTargetAttributes().iterator().next().getName()));
 			}
 		}
@@ -236,7 +240,7 @@ public class MigrationGenerator {
 	}
 	
 	protected boolean hasLength(int type) {
-		return TypesMapping.supportsLength(type) 
+		return TypesMapping.supportsLength(type)
 		        || type == Types.BLOB // for Derby
 		        || type == Types.CLOB // for Derby
 		        || type == Types.TIMESTAMP // for MySQL

@@ -18,7 +18,7 @@
  ****************************************************************/
 package org.apache.cayenne.migration;
 
-import org.apache.cayenne.merge.MergerToken;
+import org.apache.cayenne.dbsync.merge.token.MergerToken;
 
 /**
  * Represents a new table in the database.

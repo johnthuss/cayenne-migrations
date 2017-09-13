@@ -27,11 +27,11 @@ import org.apache.cayenne.access.DataNode;
 import org.apache.cayenne.configuration.DefaultRuntimeProperties;
 import org.apache.cayenne.configuration.RuntimeProperties;
 import org.apache.cayenne.dba.postgres.PostgresAdapter;
+import org.apache.cayenne.dbsync.merge.token.db.SetAllowNullToDb;
+import org.apache.cayenne.dbsync.merge.token.db.SetColumnTypeToDb;
+import org.apache.cayenne.dbsync.merge.token.db.SetNotNullToDb;
+import org.apache.cayenne.dbsync.merge.token.db.SetValueForNullToDb;
 import org.apache.cayenne.di.spi.DefaultClassLoaderManager;
-import org.apache.cayenne.merge.SetAllowNullToDb;
-import org.apache.cayenne.merge.SetColumnTypeToDb;
-import org.apache.cayenne.merge.SetNotNullToDb;
-import org.apache.cayenne.merge.SetValueForNullToDb;
 import org.apache.cayenne.resource.ClassLoaderResourceLocator;
 
 public class MigrationColumnExistingTest extends TestCase {
