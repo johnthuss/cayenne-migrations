@@ -26,8 +26,10 @@ import java.util.Map;
 import org.apache.cayenne.access.DataNode;
 import org.apache.cayenne.configuration.server.ServerRuntime;
 import org.apache.cayenne.dba.DbAdapter;
+import org.apache.cayenne.dbsync.merge.factory.DefaultMergerTokenFactory;
 import org.apache.cayenne.dbsync.merge.factory.MergerTokenFactory;
 import org.apache.cayenne.dbsync.merge.token.MergerToken;
+import org.apache.cayenne.di.Injector;
 import org.apache.cayenne.map.DataMap;
 import org.apache.cayenne.merge.ArbitrarySqlToDb;
 
@@ -113,7 +115,12 @@ public class MigrationDatabase {
 	}
 	
 	MergerTokenFactory factory() {
-        return ServerRuntime.getThreadInjector().getInstance(MergerTokenFactory.class);
+	    Injector injector = ServerRuntime.getThreadInjector();
+	    if (injector != null) {
+	        return injector.getInstance(MergerTokenFactory.class);
+	    } else {
+	        return new DefaultMergerTokenFactory();
+	    }
 	}
 
 	String getDatabaseProductName() {
