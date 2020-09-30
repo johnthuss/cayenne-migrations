@@ -29,7 +29,8 @@ import org.apache.cayenne.dbsync.merge.token.MergerToken;
 import org.apache.cayenne.dbsync.merge.token.db.AbstractToDbToken;
 import org.apache.cayenne.log.JdbcEventLogger;
 import org.apache.cayenne.map.DataMap;
-import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Migrator discovers and executes Migration subclasses in order to migrate
@@ -40,7 +41,7 @@ import org.apache.commons.lang.StringUtils;
  */
 public class Migrator {
 
-	//private static final Logger log = Logger.getLogger(Migrator.class);
+    private static final Logger log = LoggerFactory.getLogger(Migrator.class);
 
     public static boolean USE_EFFICIENT_ALTER_TABLE = false;
     
@@ -134,7 +135,7 @@ public class Migrator {
 	}
 	
 	Migration createMigrationClassForVersion(DataMap map, int version) {
-		String className = migrationsPackage + "." + StringUtils.capitalize(map.getName()) + version;
+		String className = migrationsPackage + "." + MigrationGenerator.capitalize(map.getName()) + version;
 		
 		Class<?> clazz;
 		try {
@@ -142,7 +143,7 @@ public class Migrator {
 			Migration instance = (Migration) clazz.getConstructor(DataNode.class).newInstance(node);
 			return instance;
 		} catch (Exception e) {
-			//log.debug("Migration class not found: " + className + "; stopping at version " + (version-1) + ".");
+			log.debug("Migration class not found: " + className + "; stopping at version " + (version-1) + ".");
 			return null;
 		}
 	}
@@ -164,7 +165,7 @@ public class Migrator {
                     Migration migration = createMigrationClassForVersion(map, version);
                     if (migration != null) {
                         while (!lock(map)) {
-                            node.getJdbcEventLogger().log("Waiting to obtain migration lock for node: " + node.getName() + ". " +
+                            log.warn("Waiting to obtain migration lock for node: " + node.getName() + ". " +
                                     "If you terminated the application while a migration was in progress " +
                                     "you will need to clear the migration lock by running: " +
                                     unlockSql(map));
@@ -179,7 +180,7 @@ public class Migrator {
                         
     					try {
     						while ((migration = createMigrationClassForVersion(map, version)) != null) {
-    						    node.getJdbcEventLogger().log(String.format("Updating dataMap '%s' to version %d", map.getName(), version));
+    						    log.info(String.format("Updating dataMap '%s' to version %d", map.getName(), version));
     						    migration.getDatabase().setDatabaseProductName(getConnection().getMetaData().getDatabaseProductName());
     							migration.run();
     							try {
