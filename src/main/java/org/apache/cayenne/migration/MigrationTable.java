@@ -312,7 +312,7 @@ public abstract class MigrationTable {
      */
     public void addForeignKey(String sourceColumnName, String destinationTable, String destinationColumnName, boolean shouldCreateIndexIfNeeded) {
         if (shouldCreateIndexIfNeeded) {
-            String indexName = getEntity().getName() + "_" + sourceColumnName + "_idx";
+            String indexName = getEntity().getName().replaceFirst(".+\\.", "") + "_" + sourceColumnName + "_idx";
             // TODO: the specific SQL should really come from the DbAdapter
             getDatabase().addOperation(new ArbitrarySqlToDb(String.format("CREATE INDEX %s ON %s(%s)", indexName, getEntity().getName(), sourceColumnName)));
         }

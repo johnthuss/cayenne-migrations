@@ -61,26 +61,33 @@ public class Migrator {
 
 	/**
 	 * The name of the table that holds the version and lock information for the Migrator to use.
+	 * @param map 
 	 * @return
 	 */
-	protected String migrationTableName() {
-		return "dbupdater";
+	protected String migrationTableName(DataMap map) {
+	    String schema = map.getDefaultSchema() != null ? map.getDefaultSchema() + "." : "";
+		return schema + "dbupdater";
 	}
 	
-	void createInternalMigrationSchema() throws SQLException {
-		executeSqlWithUpdateCount("CREATE TABLE " + migrationTableName() + "(dataMap VARCHAR(50) NOT NULL, version INTEGER DEFAULT -1 NOT NULL, locked SMALLINT DEFAULT 0 NOT NULL, PRIMARY KEY(dataMap))");
+	void createInternalMigrationSchema(DataMap map) throws SQLException {
+	    String schema = map.getDefaultSchema() != null ? map.getDefaultSchema() : null;
+	    if (schema != null) {
+	        executeSqlWithUpdateCount("CREATE SCHEMA IF NOT EXISTS " + schema);
+	    }
+	    
+		executeSqlWithUpdateCount("CREATE TABLE " + migrationTableName(map) + "(dataMap VARCHAR(50) NOT NULL, version INTEGER DEFAULT -1 NOT NULL, locked SMALLINT DEFAULT 0 NOT NULL, PRIMARY KEY(dataMap))");
 		getConnection().commit();
 	}
 	
 	int currentDbVersion(DataMap map) throws SQLException {
-	    String sql = String.format("SELECT version FROM %s WHERE dataMap = '%s'", migrationTableName(), map.getName());
+	    String sql = String.format("SELECT version FROM %s WHERE dataMap = '%s'", migrationTableName(map), map.getName());
 	    Integer version = null;
 	    try {
 	        version = executeSqlReturnInt(sql);
 	        return version != null ? version.intValue() : -1;
 	    } catch (Exception e) {
 	        try {
-	            createInternalMigrationSchema();
+	            createInternalMigrationSchema(map);
 	        } catch (Exception e2) {
 	            node.getJdbcEventLogger().log(e.getMessage());
 	        }
@@ -92,14 +99,14 @@ public class Migrator {
 	}
 	
 	void setDbVersion(DataMap map, int version) throws SQLException {
-		int count = executeSqlWithUpdateCount(String.format("UPDATE %s SET version = %d WHERE version = %d AND dataMap = '%s'", migrationTableName(), version, version-1, map.getName()));
+		int count = executeSqlWithUpdateCount(String.format("UPDATE %s SET version = %d WHERE version = %d AND dataMap = '%s'", migrationTableName(map), version, version-1, map.getName()));
 		if (count == 0) {
 			throw new RuntimeException("Unable to update database version for dataMap: " + map.getName());
 		}
 	}
 	
 	boolean lock(DataMap map) throws SQLException {
-		String sql = String.format("UPDATE %s SET locked = 1 WHERE locked=0 and dataMap='%s'", migrationTableName(), map.getName());
+		String sql = String.format("UPDATE %s SET locked = 1 WHERE locked=0 and dataMap='%s'", migrationTableName(map), map.getName());
 		int count = 0;
 		try {
 			count = executeSqlWithUpdateCount(sql);
@@ -107,13 +114,13 @@ public class Migrator {
 				return true; // got the lock
 			}
 		
-	        sql = String.format("SELECT locked FROM %s WHERE dataMap='%s'", migrationTableName(), map.getName());
+	        sql = String.format("SELECT locked FROM %s WHERE dataMap='%s'", migrationTableName(map), map.getName());
 	        Integer locked = executeSqlReturnInt(sql);
 	        if (locked != null) {
 	        	return false; // row exists and is already locked
 	        } else {
 	        	// row doesn't exist
-	        	sql = String.format("INSERT INTO %s(dataMap, locked) VALUES ('%s', 1)", migrationTableName(), map.getName());
+	        	sql = String.format("INSERT INTO %s(dataMap, locked) VALUES ('%s', 1)", migrationTableName(map), map.getName());
 	        	executeSqlWithUpdateCount(sql);
 	        	return true;
 	        }
@@ -123,7 +130,7 @@ public class Migrator {
 	}
 	
 	String unlockSql(DataMap map) {
-	    return String.format("UPDATE %s SET locked = 0 WHERE locked = 1 AND dataMap = '%s'", migrationTableName(), map.getName());
+	    return String.format("UPDATE %s SET locked = 0 WHERE locked = 1 AND dataMap = '%s'", migrationTableName(map), map.getName());
 	}
 	
 	void unlock(DataMap map) throws SQLException {
@@ -186,7 +193,7 @@ public class Migrator {
     							try {
     							    executeOperations(migration.getDatabase().getOperations());
     							} catch (Exception e) {
-    							    throw new RuntimeException("Failed to migrate node=" + node.getName() + ", dataMap=" + map.getName() + " to version=" + version + ": " + e.getMessage());
+    							    throw new RuntimeException("Failed to migrate node=" + node.getName() + ", dataMap=" + map.getName() + " to version=" + version + ": " + e.getMessage(), e);
     							}
     							setDbVersion(map, version);
     							getConnection().commit();
